@@ -42,3 +42,11 @@ Light sensor not working (~suspected bad input pin~, not pin, heat works fine wi
 Heartbeat sensor inconsistent (not an issue for demoing) - Ignore for now
 
 Bluetooth connection inconsistent (think it's when the phone is connected to uni wifi) - Working fine
+
+------------------------------------------------------------------------------
+Update 5: Multiple git branchs
+
+Working through each sensor, testing and getting data, while working through issues with sensors that did not function as intended.
+New sound sensor (INMP 441) working perfectly for its use, Light Sensor working as needed, working on Heart Rate Sensor now.
+Also working on website.
+------------------------------------------------------------------------------
