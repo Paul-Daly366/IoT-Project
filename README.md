@@ -50,3 +50,6 @@ Working through each sensor, testing and getting data, while working through iss
 New sound sensor (INMP 441) working perfectly for its use, Light Sensor working as needed, working on Heart Rate Sensor now.
 Also working on website.
 ------------------------------------------------------------------------------
+Update 6: Getting Main code up to date
+
+The main code file has been updated with the new sound sensor code, as well as new code for the light sensor. However, I have encountered an issue uploading it to ESP32 ('Core dump flash config is corrupted'). I will look into this for the next commit. I also need to work on the heart sensor, the website, and integrating Fetch API & ThinkSpeak into the project.
