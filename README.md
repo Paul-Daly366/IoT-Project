@@ -4,7 +4,7 @@ Bachelor of Engineering (Honours) in Software and Electronic Engineering - Year 
 
 Device to Monitor Conditions for Panic/Anxiety Attacks
 
-Using an ESP32, LCD, LEDs, DFRobot DHT11 Temperature Sensor, DFRobot HeartRate Sensor, LDR Light Sensor and a INMP411 Sound Sensor.
+Using an ESP32, LCD, LEDs, DFRobot DHT11 Temperature Sensor, DFRobot HeartRate Sensor, LDR Light Sensor and an INMP411 Sound Sensor.
 
 ------------------------------------------------------------------------------
 
