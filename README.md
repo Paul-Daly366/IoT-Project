@@ -58,4 +58,4 @@ The main code file has been updated with the new sound sensor code, as well as n
 ------------------------------------------------------------------------------
 Update 7: Continuing work with Main Code file
 
-The 'corruption' issue has been narrowed down to the code added for the sound sensor, will test further in the next update. Code snippets were added, these are tests for the individual sensors, and are flexible enough to factor into main code later on if needed. Starting website, Fetch and ThingSpeak soon.
+The 'corruption' issue has been narrowed down to the code added for the sound sensor, will test further in the next update. Code snippets were added, these are tests for the individual sensors, and are flexible enough to factor into main code later on if needed. Starting website, Fetch and ThingSpeak soon. I have had to temporarily cut the heartrate sensor, possibly permanently, it's difficult to get working and when it does work it's very inconsistent.
