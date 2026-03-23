@@ -49,6 +49,7 @@ Update 5: Multiple git branchs
 Working through each sensor, testing and getting data, while working through issues with sensors that did not function as intended.
 New sound sensor (INMP 441) working perfectly for its use, Light Sensor working as needed, working on Heart Rate Sensor now.
 Also working on website.
+
 ------------------------------------------------------------------------------
 Update 6: Getting Main code up to date
 
