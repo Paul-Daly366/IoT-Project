@@ -52,4 +52,9 @@ Also working on website.
 ------------------------------------------------------------------------------
 Update 6: Getting Main code up to date
 
-The main code file has been updated with the new sound sensor code, as well as new code for the light sensor. However, I have encountered an issue uploading it to ESP32 ('Core dump flash config is corrupted'). I will look into this for the next commit. I also need to work on the heart sensor, the website, and integrating Fetch API & ThinkSpeak into the project.
+The main code file has been updated with the new sound sensor code, as well as new code for the light sensor. However, I have encountered an issue uploading it to ESP32 ('Core dump flash config is corrupted'). I will look into this for the next commit. I also need to work on the heart sensor, the website, and integrating Fetch API & ThingSpeak into the project.
+
+------------------------------------------------------------------------------
+Update 7: Continuing work with Main Code file
+
+The 'corruption' issue has been narrowed down to the code added for the sound sensor, will test further in the next update. Code snippets were added, these are tests for the individual sensors, and are flexible enough to factor into main code later on if needed. Starting website, Fetch and ThingSpeak soon.
