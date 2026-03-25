@@ -5,6 +5,7 @@
  ~~   as part of Year 2, Semester 1 & 2 IoT Project     ~~
 */
 // ~~ LIBRARIES ~~
+#include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <WebServer.h>
@@ -13,14 +14,12 @@
 #include <Wire.h>
 #include "rgb_lcd.h"
 #include <DFRobot_DHT11.h>
-//#include "DFRobot_Heartrate.h" 
 /* Heartrate sensor cut due to time constraints, very inconsistent sensor when it did work */
 #include <driver/i2s.h>
 
 // ~~ PERIPHERAL INITS ~~
 rgb_lcd lcd;
 DFRobot_DHT11 DHT;
-//DFRobot_Heartrate heartrate(DIGITAL_MODE);
 
 // ~~ PINS ~~
 #define HEAT_INPUT 19
@@ -35,6 +34,8 @@ DFRobot_DHT11 DHT;
 #define I2S_SD 16
 #define I2S_PORT I2S_NUM_0
 /* LCD wires: Yellow - 22, White - 21 */
+#define bufferLen 1024
+int16_t sBuffer[bufferLen];
 
 // ~~ CONSTANTS ~~
 const char* ssid = "PaulHotspot";
@@ -42,10 +43,9 @@ const char* password = "12345678";
 const int B_DELAY = 1000;
 const int S_DELAY = 100;
 const int soundThreshold = 500;
-const int bufferLen = 1024;
+
 
 // ~~ Global Variables ~~
-int16_t sBuffer[bufferLen];
 int validValue = 60; 
 int16_t audioData;  // Variable to store 16-bit audio data from microphone
 size_t bytesRead, bytesIn = 0;   // Variable to store number of bytes read
@@ -71,7 +71,6 @@ String getLight(){
   return lightReading;
 }
 
-/*
 //Returns whether ambient sound is loud or low
 String getSound(){
   //
@@ -86,7 +85,6 @@ String getSound(){
   }
   return soundValue;
 }
-*/
 
 void handleRoot() {
   String message = homePagePart1 + getTemp() + homePagePart2 + getLight() + homePagePart3 + " N/A " + homePagePart4;
@@ -224,7 +222,6 @@ void loop(void) {
   lcd.print(lightReturn);
   delay(B_DELAY);
 
-  /*
   // ~~ SOUND READING ~~
   lcd.clear();
   lcd.setCursor(0,1);
@@ -234,9 +231,9 @@ void loop(void) {
   lcd.setCursor(0,2);
   lcd.print(soundReturn);
   delay(B_DELAY);
-  */
+  
 }
-/*
+
 // ~~ FUNCTIONS TO SETUP I2S WITH INMP441 ~~
 // Function to install and configure the I2S driver
 void i2s_install() {
@@ -265,4 +262,4 @@ void i2s_setpin() {
     };
 
     i2s_set_pin(I2S_PORT, &pin_config); // Apply the pin configuration
-} */
+}
