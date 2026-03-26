@@ -154,13 +154,13 @@ String homePage = F(R"=====(
       const sensorData = await response.json();
 
       document.getElementById("temperature").textContent = sensorData.temp;
-      document.getElementById("Light").textContent = sensorData.light;
-      document.getElementById("sound").textContent = sensorData.sound;
+      document.getElementById("light").textContent = sensorData.light;
+      //document.getElementById("sound").textContent = sensorData.sound;
       //document.getElementById("heartrate").textContent = sensorData.heart;
     } catch (error) { //TODO: ADD IN PROJ SPECIFIC ERROR HANDLING
       document.getElementById("temperature").textContent = "ERR";
       document.getElementById("light").textContent = "ERR";
-      document.getElementById("sound").textContent = "ERR";
+      //document.getElementById("sound").textContent = "ERR";
       //document.getElementById("heartrate").textContent = "ERR";
       console.log(error);
     }

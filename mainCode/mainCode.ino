@@ -53,7 +53,7 @@ String getTemp() {
   DHT.read(HEAT_INPUT); //Get data from sensor
   uint8_t tempRead = DHT.temperature; //Read data into a string
   String tempReadStr = (String) tempRead;
-  tempReadStr += " C";
+  //tempReadStr += " C";
 
   if(tempRead>=heatUL || tempRead<=heatLL){ 
     tempFlag = 1;
@@ -82,7 +82,7 @@ String getLight(){
 
   String lightReading = "";
   lightReading += lightPercent;
-  lightReading += "%";
+  //lightReading += "%";
   return lightReading;
 }
 
@@ -118,10 +118,27 @@ void statusScreen(){
   }
 }
 
+//Function to setup webpage, taking code from homePage.h as html
 void handleRoot() {
   server.send(200, "text/html", homePage);
 }
 
+//Function for receiving sensor data for webpage
+/* 
+  ~~ This works by creating a string and formatting it as a JSON object, ~~
+  ~~ filling this with data from the senors in key value pairs, ~~
+  ~~ and sending to server, which is waiting for this data with async functions ~~
+*/
+void handleSensors(){
+  String json = "{";
+  json += "\"temp\":" + getTemp() + ",";
+  json += "\"light\":" + getLight();
+  json += "}";
+  Serial.println(json); //Test Line
+  server.send(200, "application/json",json);
+}
+
+//Function for 404 error
 void handleNotFound() {
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -190,10 +207,8 @@ void setup(void) {
     Serial.println("MDNS responder started");
   }
 
-  server.on("/", handleRoot);
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
+  server.on("/", handleRoot); //Endpoint, regular website
+  server.on("/sensors", HTTP_GET, handleSensors); //Endpoint called by async function in website script
   server.onNotFound(handleNotFound);
 
   server.begin();
