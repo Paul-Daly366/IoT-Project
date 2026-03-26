@@ -64,3 +64,10 @@ The 'corruption' issue has been narrowed down to the code added for the sound se
 Update 7a: Figured out the corruption issue
 
 The issue is mostly with the sound sensor and its install functions. I've found that code won't write to the ESP32 when both the sound code and "DFRobot_Heartrate.h" library are present. Other smaller issues with how the constants are written also cause this issue. Code should be fine now, but continuing on I'm going to be very careful writing code.
+
+------------------------------------------------------------------------------
+Update 8: Finished main code loop
+
+After deciding to cut the DFRobot heartrate sensor, and INMP441 sound sensor, I have finished up the main code loop. Last things to do are to add in Fetch API and ThingSpeak.
+
+Main code loop: TODO - WRITE OUT
