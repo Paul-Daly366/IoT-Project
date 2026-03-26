@@ -53,14 +53,15 @@ String getTemp() {
   DHT.read(HEAT_INPUT); //Get data from sensor
   uint8_t tempRead = DHT.temperature; //Read data into a string
   String tempReadStr = (String) tempRead;
-  tempReadStr += " C";
-  if(tempRead>=heatUL || tempRead<=heatLL){ //Test serial output
+  //tempReadStr += " C";
+
+  if(tempRead>=heatUL || tempRead<=heatLL){ 
     tempFlag = 1;
-    Serial.println("Temp flag went high");
+    //Serial.println("Temp flag went high"); //Test with serial output
   }
   else{
     tempFlag = 0;
-    Serial.println("Temp flag went low");
+    //Serial.println("Temp flag went low"); //Test with serial output
   }
   return tempReadStr;
 }
@@ -69,17 +70,19 @@ String getTemp() {
 String getLight(){
   float lightVal = analogRead(LIGHT_INPUT); //Read from LDR to get a float between 0 and 4095
   float lightPercent = (1 - (lightVal/4095)) * 100; //Convert lightVal into a percentage of present light
+  
   if(lightPercent > lightL){ 
     lightFlag=1;
-    Serial.println("Light flag went high"); //Test serial output
+    //Serial.println("Light flag went high"); //Test with serial output
   }
   else{
     lightFlag=0;
-    Serial.println("Light flag went low");
+    //Serial.println("Light flag went low"); //Test with serial output
   }
+
   String lightReading = "";
   lightReading += lightPercent;
-  lightReading += "%";
+  //lightReading += "%";
   return lightReading;
 }
 
@@ -115,11 +118,27 @@ void statusScreen(){
   }
 }
 
+//Function to setup webpage, taking code from homePage.h as html
 void handleRoot() {
-  String message = homePagePart1 + getTemp() + homePagePart2 + "NonFunc atm" + homePagePart3 + " N/A " + homePagePart4;
-  server.send(200, "text/html", message);
+  server.send(200, "text/html", homePage);
 }
 
+//Function for receiving sensor data for webpage
+/* 
+  ~~ This works by creating a string and formatting it as a JSON object, ~~
+  ~~ filling this with data from the senors in key value pairs, ~~
+  ~~ and sending to server, which is waiting for this data with async functions ~~
+*/
+void handleSensors(){
+  String json = "{";
+  json += "\"temp\":" + getTemp() + ",";
+  json += "\"light\":" + getLight();
+  json += "}";
+  Serial.println(json); //Test Line
+  server.send(200, "application/json",json);
+}
+
+//Function for 404 error
 void handleNotFound() {
   String message = "File Not Found\n\n";
   message += "URI: ";
@@ -188,10 +207,8 @@ void setup(void) {
     Serial.println("MDNS responder started");
   }
 
-  server.on("/", handleRoot);
-  server.on("/inline", []() {
-    server.send(200, "text/plain", "this works as well");
-  });
+  server.on("/", handleRoot); //Endpoint, regular website
+  server.on("/sensors", HTTP_GET, handleSensors); //Endpoint called by async function in website script
   server.onNotFound(handleNotFound);
 
   server.begin();
