@@ -54,13 +54,14 @@ String getTemp() {
   uint8_t tempRead = DHT.temperature; //Read data into a string
   String tempReadStr = (String) tempRead;
   tempReadStr += " C";
-  if(tempRead>=heatUL || tempRead<=heatLL){ //Test serial output
+
+  if(tempRead>=heatUL || tempRead<=heatLL){ 
     tempFlag = 1;
-    Serial.println("Temp flag went high");
+    //Serial.println("Temp flag went high"); //Test with serial output
   }
   else{
     tempFlag = 0;
-    Serial.println("Temp flag went low");
+    //Serial.println("Temp flag went low"); //Test with serial output
   }
   return tempReadStr;
 }
@@ -69,14 +70,16 @@ String getTemp() {
 String getLight(){
   float lightVal = analogRead(LIGHT_INPUT); //Read from LDR to get a float between 0 and 4095
   float lightPercent = (1 - (lightVal/4095)) * 100; //Convert lightVal into a percentage of present light
+  
   if(lightPercent > lightL){ 
     lightFlag=1;
-    Serial.println("Light flag went high"); //Test serial output
+    //Serial.println("Light flag went high"); //Test with serial output
   }
   else{
     lightFlag=0;
-    Serial.println("Light flag went low");
+    //Serial.println("Light flag went low"); //Test with serial output
   }
+
   String lightReading = "";
   lightReading += lightPercent;
   lightReading += "%";
@@ -116,8 +119,7 @@ void statusScreen(){
 }
 
 void handleRoot() {
-  String message = homePagePart1 + getTemp() + homePagePart2 + "NonFunc atm" + homePagePart3 + " N/A " + homePagePart4;
-  server.send(200, "text/html", message);
+  server.send(200, "text/html", homePage);
 }
 
 void handleNotFound() {
