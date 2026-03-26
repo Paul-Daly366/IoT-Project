@@ -68,6 +68,6 @@ The issue is mostly with the sound sensor and its install functions. I've found 
 ------------------------------------------------------------------------------
 Update 8: Finished main code loop
 
-After deciding to cut the DFRobot heartrate sensor, and INMP441 sound sensor, I have finished up the main code loop. Last things to do are to add in Fetch API and ThingSpeak.
+After deciding to cut the DFRobot heartrate sensor, and INMP441 sound sensor, I have finished up the main code loop. Last things to do are to add in Fetch API and ThingSpeak. I will still be getting data from the cut sensors through ThingSpeak, but they will not feature in the main loop.
 
 Main code loop: TODO - WRITE OUT
