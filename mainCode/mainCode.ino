@@ -14,8 +14,9 @@
 #include <WebServer.h>
 #include <ESPmDNS.h>
 #include "homepage.h"
-/* Heartrate sensor cut due to time constraints, very inconsistent sensor when it did work */
-
+/*
+Heartrate sensor cut due to time constraints, very inconsistent sensor when it did work
+Sound sensor cut due to time constraints and stability issues */
 // ~~ PERIPHERAL INITS ~~
 rgb_lcd lcd;
 DFRobot_DHT11 DHT;
@@ -23,38 +24,26 @@ DFRobot_Heartrate heartrate(DIGITAL_MODE);
 
 // ~~ PINS ~~
 #define HEAT_INPUT 19
-#define SOUND_INPUT 34
 #define HEART_INPUT 13
-#define LIGHT_INPUT 25
+#define LIGHT_INPUT 34 //Prev 25, did not work on this pin
 #define GLED 27
-#define YLED 26
+#define YLED 25
 #define RLED 32
-/*
-#define I2S_SCK 17
-#define I2S_WS 18
-#define I2S_SD 16
-#define I2S_PORT I2S_NUM_0
-*/
 /* LCD wires: Yellow - 22, White - 21 */
-/*
-#define bufferLen 1024
-int16_t sBuffer[bufferLen];
-*/
 
 // ~~ CONSTANTS ~~
 const char* ssid = "PaulHotspot";
 const char* password = "12345678";
-const int B_DELAY = 1000;
+const int B_DELAY = 2000;
+const int M_DELAY = 500;
 const int S_DELAY = 100;
-//const int soundThreshold = 500;
-
+const int heatUL = 24, heatLL = 18, lightL = 75; //Thresholds for temperature and light flags, used to update warning LEDs and text
+// ~~ heatUL = 24 C & heatLL = 18 C, Values according to HSE guidelines ~~
+// ~~ lightL = 75%, this is the value given when a flashlight is pointed at the sensor ~~
 
 // ~~ Global Variables ~~
-int validValue = 60; 
-/*
-int16_t audioData;  // Variable to store 16-bit audio data from microphone
-size_t bytesRead, bytesIn = 0;   // Variable to store number of bytes read
-*/
+int validValue = 60; //Was used for heartrate loop, nonfunc atm
+uint8_t tempFlag = 0, lightFlag = 0; //These are 1 when temp or light is too much/too little, used with LEDs
 
 WebServer server(80);
 
@@ -62,37 +51,69 @@ WebServer server(80);
 // Returns a string containing heat reading with a Celsius symbol
 String getTemp() {
   DHT.read(HEAT_INPUT); //Get data from sensor
-  String tempRead =(String) DHT.temperature; //Read data into a string
-  tempRead += " C";
-  return tempRead;
+  uint8_t tempRead = DHT.temperature; //Read data into a string
+  String tempReadStr = (String) tempRead;
+  tempReadStr += " C";
+  if(tempRead>=heatUL || tempRead<=heatLL){ //Test serial output
+    tempFlag = 1;
+    Serial.println("Temp flag went high");
+  }
+  else{
+    tempFlag = 0;
+    Serial.println("Temp flag went low");
+  }
+  return tempReadStr;
 }
 
 //Returns a light percentage
 String getLight(){
   float lightVal = analogRead(LIGHT_INPUT); //Read from LDR to get a float between 0 and 4095
   float lightPercent = (1 - (lightVal/4095)) * 100; //Convert lightVal into a percentage of present light
+  if(lightPercent > lightL){ 
+    lightFlag=1;
+    Serial.println("Light flag went high"); //Test serial output
+  }
+  else{
+    lightFlag=0;
+    Serial.println("Light flag went low");
+  }
   String lightReading = "";
   lightReading += lightPercent;
   lightReading += "%";
   return lightReading;
 }
 
-/*
-//Returns whether ambient sound is loud or low
-String getSound(){
-  //
-  String soundValue = "";
-  bytesRead = i2s_read(I2S_PORT, &audioData, sizeof(audioData), &bytesIn, portMAX_DELAY);
-  int soundIntensity = abs(audioData);
-  if(soundIntensity > soundThreshold){
-    soundValue += "Too loud!";
+//Function to update LEDs (maybe also on website?)
+void updateLEDs(){
+  if(tempFlag == 1 && lightFlag == 1){ //Both flags set, red led is lit
+    digitalWrite(GLED,LOW);
+    digitalWrite(YLED,LOW);
+    digitalWrite(RLED,HIGH);
   }
-  else{
-    soundValue += "Sound normal";
+  else if(tempFlag == 1 || lightFlag == 1){ //One flag set, yellow LED is lit
+    digitalWrite(GLED,LOW);
+    digitalWrite(YLED,HIGH);
+    digitalWrite(RLED,LOW);
   }
-  return soundValue;
+  else{ //Neither flag is set, green LED is lit
+    digitalWrite(GLED,HIGH);
+    digitalWrite(YLED,LOW);
+    digitalWrite(RLED,LOW);
+  }
 }
-*/
+
+//Function to print status on screen at start of loop
+void statusScreen(){
+  if(tempFlag == 1 && lightFlag == 1){ //Both flags set, print 'Warning!'
+    lcd.print("Warning!");
+  }
+  else if(tempFlag == 1 || lightFlag == 1){ //One flag set, print 'Slight warning'
+    lcd.print("Slight warning");
+  }
+  else{ //Neither flag is set, print 'All good'
+    lcd.print("All good");
+  }
+}
 
 void handleRoot() {
   String message = homePagePart1 + getTemp() + homePagePart2 + "NonFunc atm" + homePagePart3 + " N/A " + homePagePart4;
@@ -124,9 +145,9 @@ void setup(void) {
   pinMode(RLED,OUTPUT);
   // LCD
   lcd.begin(16,2);
-  lcd.print("Peripherals +");
+  lcd.print("Anxiety Monitor");
   lcd.setCursor(0,1);
-  lcd.print("WebServer Test");
+  lcd.print("& WebServer");
   Serial.println("LCD SCR: Peripherals +\nWebServer Test");
   for(int i; i < 3; i++){
     digitalWrite(GLED,HIGH);
@@ -142,25 +163,17 @@ void setup(void) {
   digitalWrite(GLED,LOW);
   digitalWrite(YLED,LOW);
   digitalWrite(RLED,LOW);
-  delay(300);
-
-  /*
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Setting up I2S");
-  Serial.println("Setting up I2S");
-  delay(B_DELAY);
-  i2s_install();   // Configure and install the I2S driver
-  i2s_setpin();    // Set the I2S pins
-  i2s_start(I2S_PORT); // Start the I2S receiver
-  delay(500);
-  */
 
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("");
 
   // Wait for connection
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Waiting for");
+  lcd.setCursor(0,1);
+  lcd.print("connection...");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -185,8 +198,8 @@ void setup(void) {
   Serial.println("HTTP server started");
 
   lcd.clear();
-  lcd.begin(0,0);
-  lcd.print("Connected");
+  lcd.setCursor(0,0);
+  lcd.print("   Connected!");
   delay(B_DELAY);
   delay(B_DELAY);
 }
@@ -194,7 +207,9 @@ void setup(void) {
 // ~~ Main Loop ~~
 void loop(void) {
   // VARIABLES
-  int t=0; //NONFUNC
+  //int t=0; NONFUNC
+  uint8_t i;
+  String stringUpdate; //Used to update flags for led/status checks
 
   // SERVER
   server.handleClient();
@@ -203,73 +218,55 @@ void loop(void) {
   // START
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Project Demo");
+  lcd.print("Status:");
+  updateLEDs();
   delay(S_DELAY);
   lcd.setCursor(0,1);
-  lcd.print("Sensors/Website");
-  delay(B_DELAY);
+  stringUpdate = getLight();
+  stringUpdate = getTemp();
+  statusScreen();
+  updateLEDs();
   delay(B_DELAY);
   
   // ~~ HEAT READING ~~
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Heat Sensor");
-  String heat = getTemp();
-  delay(S_DELAY);
-  lcd.setCursor(0,1);
-  lcd.print(heat);
-  delay(B_DELAY);
+  for(i=0;i<5;i++){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(" Heat    Status"); //x spaces between Heat & Status
+    lcd.setCursor(0,1);
+    lcd.print(" ");
+    lcd.print(getTemp());
+    stringUpdate = getLight();
+    updateLEDs();
+    if(tempFlag==1){
+      lcd.print("   Warning");
+    }
+    else{
+      lcd.print("     Fine");
+    }
+    delay(B_DELAY);
+  }
   
   // ~~ LIGHT READING ~~ 
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Light Sensor");
-  String lightReturn = getLight();
-  delay(S_DELAY);
-  lcd.setCursor(0,1);
-  lcd.print(lightReturn);
-  delay(B_DELAY);
+  for(i=0;i<5;i++){
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print(" Light   Status");
+    lcd.setCursor(0,1);
+    delay(S_DELAY);
+    lcd.print(" ");
+    lcd.print(getLight());
+    stringUpdate = getTemp();
+    updateLEDs();
+    if(lightFlag==1){
+      lcd.print(" ");
+      lcd.print("Warning");
+    }
+    else{
+      lcd.print("  Fine");
+    }
+    delay(B_DELAY);
+  }
   
-  /*
-  // ~~ SOUND READING ~~
-  lcd.clear();
-  lcd.setCursor(0,1);
-  lcd.print("Light Sensor");
-  delay(S_DELAY);
-  String soundReturn = getSound();
-  lcd.setCursor(0,2);
-  lcd.print(soundReturn);
-  delay(B_DELAY);
-  */
+  
 }
-/* 
-// ~~ FUNCTIONS TO SETUP I2S WITH INMP441 ~~
-// Function to install and configure the I2S driver
-void i2s_install() {
-    const i2s_config_t i2s_config = {
-        .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_RX), // Set as master receiver
-        .sample_rate = 16000,              // Audio sample rate (16kHz)
-        .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT, // 16-bit per sample
-        .channel_format = I2S_CHANNEL_FMT_ONLY_LEFT, // Use left channel only (mono)
-        .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_STAND_I2S), // Standard I2S format
-        .intr_alloc_flags = 0,             // No interrupt flags
-        .dma_buf_count = 8,                // Number of DMA buffers
-        .dma_buf_len = bufferLen,          // Size of each DMA buffer
-        .use_apll = false                  // Do not use APLL clock
-    };
-
-    i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL); // Install the driver
-}
-
-// Function to set the I2S pinout
-void i2s_setpin() {
-    const i2s_pin_config_t pin_config = {
-        .bck_io_num = I2S_SCK,   // Bit clock pin
-        .ws_io_num = I2S_WS,     // Word select pin
-        .data_out_num = I2S_PIN_NO_CHANGE, // No data output needed (RX only)
-        .data_in_num = I2S_SD    // Data input pin (from microphone)
-    };
-
-    i2s_set_pin(I2S_PORT, &pin_config); // Apply the pin configuration
-}
-*/

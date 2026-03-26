@@ -5,7 +5,7 @@ rgb_lcd lcd;
 
 /* LCD wires: Yellow - 22, White - 21 */
 #define GLED 27
-#define YLED 26
+#define YLED 25
 #define RLED 32
 
 uint8_t t = 0;
