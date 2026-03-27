@@ -37,9 +37,9 @@ const char* password = "12345678";
 const int B_DELAY = 2000;
 const int M_DELAY = 500;
 const int S_DELAY = 100;
-const int heatUL = 24, heatLL = 18, lightL = 75; //Thresholds for temperature and light flags, used to update warning LEDs and text
+const int heatUL = 24, heatLL = 18, lightL = 80; //Thresholds for temperature and light flags, used to update warning LEDs and text
 // ~~ heatUL = 24 C & heatLL = 18 C, Values according to HSE guidelines ~~
-// ~~ lightL = 75%, this is the value given when a flashlight is pointed at the sensor ~~
+// ~~ lightL = 80%, this is the value given when a flashlight is pointed at the sensor ~~
 
 // ~~ Global Variables ~~
 int validValue = 60; //Was used for heartrate loop, nonfunc atm
@@ -108,13 +108,13 @@ void updateLEDs(){
 //Function to print status on screen at start of loop
 void statusScreen(){
   if(tempFlag == 1 && lightFlag == 1){ //Both flags set, print 'Warning!'
-    lcd.print("Warning!");
+    lcd.print("    Warning!");
   }
   else if(tempFlag == 1 || lightFlag == 1){ //One flag set, print 'Slight warning'
-    lcd.print("Slight warning");
+    lcd.print(" Slight warning");
   }
   else{ //Neither flag is set, print 'All good'
-    lcd.print("All good");
+    lcd.print("    All good");
   }
 }
 
@@ -235,40 +235,43 @@ void loop(void) {
   // START
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Status:");
+  lcd.print("    Status:");
   updateLEDs();
+  server.handleClient();
   delay(S_DELAY);
   lcd.setCursor(0,1);
   stringUpdate = getLight();
   stringUpdate = getTemp();
   statusScreen();
   updateLEDs();
+  server.handleClient();
   delay(B_DELAY);
   
   // ~~ HEAT READING ~~
-  for(i=0;i<5;i++){
+  for(i=0;i<3;i++){
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print(" Heat    Status"); //x spaces between Heat & Status
+    lcd.print(" Heat C   Status"); //x spaces between Heat & Status
     lcd.setCursor(0,1);
     lcd.print(" ");
     lcd.print(getTemp());
     stringUpdate = getLight();
     updateLEDs();
     if(tempFlag==1){
-      lcd.print("   Warning");
+      lcd.print("      Warning");
     }
     else{
-      lcd.print("     Fine");
+      lcd.print("        Fine");
     }
+    server.handleClient();
     delay(B_DELAY);
   }
   
   // ~~ LIGHT READING ~~ 
-  for(i=0;i<5;i++){
+  for(i=0;i<3;i++){
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print(" Light   Status");
+    lcd.print(" Light %  Status");
     lcd.setCursor(0,1);
     delay(S_DELAY);
     lcd.print(" ");
@@ -277,11 +280,12 @@ void loop(void) {
     updateLEDs();
     if(lightFlag==1){
       lcd.print(" ");
-      lcd.print("Warning");
+      lcd.print("  Warning");
     }
     else{
-      lcd.print("  Fine");
+      lcd.print("     Fine");
     }
+    server.handleClient();
     delay(B_DELAY);
   }
   
