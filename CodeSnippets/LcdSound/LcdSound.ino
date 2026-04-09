@@ -4,7 +4,6 @@
 rgb_lcd lcd;
 
 /* LCD wires: Yellow - 22, White - 21 */
-#define SOUND_INPUT 34
 #define I2S_SCK 17
 #define I2S_WS 18
 #define I2S_SD 16
