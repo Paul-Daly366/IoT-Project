@@ -1,8 +1,7 @@
 # Anxiety Monitor
 
 ## Device to Monitor Conditions for Panic/Anxiety Attacks
-Paul Daly - G00470372
-
+###Paul Daly - G00470372
 ### Bachelor of Engineering (Honours) in Software and Electronic Engineering - Year 2 Semester 1 - Internet of Things Project
 
 Using an ESP32, LCD, LEDs, DFRobot DHT11 Temperature Sensor, DFRobot HeartRate Sensor, LDR Light Sensor and an INMP411 Sound Sensor.
