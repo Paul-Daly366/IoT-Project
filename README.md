@@ -22,7 +22,7 @@ Code for Light Sensor added, checking light in room and displaying on LCD
 
 Update 2: 'MainCode-LightHeatHeart' Got the main peripherals working with LCD screen, and the LEDs
 
-Heartrate sensor is inconsistent, but I have a video of it working, uploaded to one drive, linked here: [HeartRateDemo](https://atlantictu-my.sharepoint.com/personal/g00470372_atu_ie/_layouts/15/stream.aspx?id=%2Fpersonal%2Fg00470372%5Fatu%5Fie%2FDocuments%2FDocuments%2FYear%202%2FIoT%2FVID%5F20251128%5F101951%2Emp4%7E2%2Emp4&referrer=StreamWebApp%2EWeb&referrerScenario=AddressBarCopied%2Eview%2E3e4412e2%2D0a19%2D4613%2D8806%2D4b8c4ad1644d)
+Heartrate sensor is inconsistent, but I have a video of it working, uploaded to one drive, linked here: [HeartRateDemo](https://atlantictu-my.sharepoint.com/:v:/g/personal/g00470372_atu_ie/IQBHK8QfxWD7SYPEw8zPic32AZYUOPrdI78As2GZDfSebpw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=aEEsJF)
 
 ------------------------------------------------------------------------------
 
