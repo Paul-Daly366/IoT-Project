@@ -1,64 +1,67 @@
+#include <Wire.h>
+#include "rgb_lcd.h"
 #include <driver/i2s.h>
-#include <Arduino.h>
+rgb_lcd lcd;
 
+/* LCD wires: Yellow - 22, White - 21 */
 #define I2S_SCK 17
 #define I2S_WS 18
 #define I2S_SD 16
 #define I2S_PORT I2S_NUM_0
 
-#define bufferLen 1024
-int16_t sBuffer[bufferLen];
+const int soundThreshold = 500;
+const int bufferLen = 1024;
 
-const int soundThreshold = 500;  
-const int ledPin = 32;           
+int16_t sBuffer[bufferLen];
+int16_t audioData;  // Variable to store 16-bit audio data from microphone
+size_t bytesRead, bytesIn = 0;   // Variable to store number of bytes read
+uint8_t t = 0;
+
+//Returns whether ambient sound is loud or low
+String getSound(){
+  //
+  String soundValue = "";
+  bytesRead = i2s_read(I2S_PORT, &audioData, sizeof(audioData), &bytesIn, portMAX_DELAY);
+  int soundIntensity = abs(audioData);
+  /*
+  //If statement for returning a simple status
+  if(soundIntensity > soundThreshold){
+    soundValue += "Too loud!";
+  }
+  else{
+    soundValue += "Normal";
+  }
+  return soundValue;*/
+  return (String)soundIntensity;
+}
 
 void setup() {
-  Serial.begin(115200);          
-  pinMode(ledPin, OUTPUT);     
-
-  Serial.println("Setting up I2S");
-  delay(1000);
+  // put your setup code here, to run once:
   i2s_install();   // Configure and install the I2S driver
   i2s_setpin();    // Set the I2S pins
   i2s_start(I2S_PORT); // Start the I2S receiver
-  delay(500);  
+  delay(500);
 
-  /*Serial.println("INMP441 + Arduino Sound Monitor started");
-  Serial.print("Sound threshold: ");
-  Serial.println(soundThreshold);*/
+  lcd.begin(16,2);
+  lcd.print("LCD + Sound");
+  lcd.setCursor(0,1);
+  lcd.print("Snippet");
+  delay(3000);
 }
 
 void loop() {
-
-  
-  int16_t audioData;  // Variable to store 16-bit audio data from microphone
-  size_t bytesRead, bytesIn = 0;   // Variable to store number of bytes read
-
-  bytesRead = i2s_read(I2S_PORT, &audioData, sizeof(audioData), &bytesIn, portMAX_DELAY);
-
-  // 6. Process data: take absolute value to eliminate positive/negative signal difference
-  int soundIntensity = abs(audioData);
-
-  // 7. Display sound intensity on serial monitor (for real-time observation)
-  Serial.print("Current sound intensity: ");
-  Serial.println(soundIntensity);
-
-  // Read audio data from the I2S buffer
-  //esp_err_t result = i2s_read(I2S_PORT, &sBuffer, bufferLen * sizeof(int16_t), &bytesIn, portMAX_DELAY);
-
-  // 8. Sound threshold check: flash LED if intensity exceeds threshold
-  if (soundIntensity > soundThreshold) {
-    digitalWrite(ledPin, HIGH);  // Turn LED on
-    delay(100);                  // Keep on for 100ms
-    digitalWrite(ledPin, LOW);   // Turn LED off
-    delay(100);                  // Keep off for 100ms (creates blinking effect)
-  } else {
-    digitalWrite(ledPin, LOW);   // Keep LED off if below threshold
-  }
-
-  delay(100);  // Control loop frequency to prevent serial monitor spam
+  // put your main code here, to run repeatedly:
+  lcd.clear();
+  lcd.print("Sound: ");
+  lcd.print(getSound());
+  lcd.setCursor(0,1);
+  lcd.print("Time: ");
+  lcd.print(t);
+  delay(1000);
+  t++;
 }
 
+// ~~ FUNCTIONS TO SETUP I2S WITH INMP441 ~~
 // Function to install and configure the I2S driver
 void i2s_install() {
     const i2s_config_t i2s_config = {
