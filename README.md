@@ -4,6 +4,8 @@
 ### Paul Daly - G00470372
 ### Bachelor of Engineering (Honours) in Software and Electronic Engineering - Year 2 Semester 1 - Internet of Things Project
 
+![Photo of Test Stripboard](stripboardPhoto.jpg)
+
 Using an ESP32, LCD, LEDs, DFRobot DHT11 Temperature Sensor, DFRobot HeartRate Sensor, LDR Light Sensor and an INMP411 Sound Sensor.
 
 Video of device working: [Circuit Demo](https://atlantictu-my.sharepoint.com/:v:/g/personal/g00470372_atu_ie/IQBlar67ngfrS5CamZ62QlfnATYCvmG9-VoYc7hfDzL2U4c?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=WxvGCR)
