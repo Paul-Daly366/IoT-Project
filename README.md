@@ -4,8 +4,7 @@
 ### Paul Daly - G00470372
 ### Bachelor of Engineering (Honours) in Software and Electronic Engineering - Year 2 Semester 1 - Internet of Things Project
 
-<img src="StripboardPhoto.jpg" width="100">
-<img src="PosterPNG.png" width="500">
+<img src="StripboardPhoto.jpg" width="300"> <img src="PosterPNG.png" width="500">
 
 Using an ESP32, LCD, LEDs, DFRobot DHT11 Temperature Sensor, DFRobot HeartRate Sensor, LDR Light Sensor and an INMP411 Sound Sensor.
 
